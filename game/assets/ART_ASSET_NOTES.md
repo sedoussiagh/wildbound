@@ -29,23 +29,51 @@ interface protégée d’un autre jeu.
 
 ## Cycles de personnages
 
-Les dossiers `characters/wolf_guardian/` et `characters/moss_slime/` contiennent
-chacun deux cycles de quatre poses : `walk_0..3.png` et `attack_0..3.png`.
+Les dossiers `characters/wolf_guardian/`, `characters/fox_mystic/` et
+`characters/moss_slime/` contiennent chacun deux cycles de quatre poses :
+`walk_0..3.png` et `attack_0..3.png`.
 
 - `Wolf Guardian` : marche avec transfert du poids, puis anticipation, coup de
   griffe, impact et récupération de `Claw Strike`.
 - `Moss Slime` : petit bond élastique, puis compression, projection, impact et
   récupération de `Soft Bump`.
-- Méthode : génération intégrée à partir des sprites `v1`, feuille 4×2 sur chroma
-  `#ff00ff`, détourage alpha, découpe en huit cellules et nettoyage des fragments.
+- `Fox Mystic` : marche légère en robe teal, canalisation et récupération de
+  `Spark Bolt`. Le projectile reste dessiné séparément par Godot pour éviter un
+  doublon dans la pose d’attaque.
+- Méthode : nouvelles feuilles 4×2 générées à partir de chaque personnage de
+  référence sur chroma magenta, détourage alpha, séparation par composantes,
+  recentrage et marge transparente de sécurité. Aucun morceau d’une pose voisine
+  ne subsiste dans les frames exportées.
 - Les images n’incluent ni texte ni interface afin que le timing reste contrôlé
   par Godot et puisse être remplacé cycle par cycle.
 
 ## Icônes d’actions
 
-Le dossier `ui/icons/` contient six icônes originales : `claw_strike`, `end_turn`,
-`move`, `confirm`, `cancel` et `restart`. Elles partagent une direction fantasy
+Le dossier `ui/icons/` contient les icônes originales `claw_strike`, `spark_bolt`,
+`end_turn`, `move`, `confirm`, `cancel` et `restart`. Elles partagent une direction fantasy
 forestière peinte et restent indépendantes des libellés localisés.
+
+`spark_bolt.png` a été générée avec l'outil d'image intégré : éclair magique
+cyan-blanc, cœur doré et détails végétaux, conçu pour rester lisible à 48 px sur
+chroma magenta. La feuille et l'icône ont ensuite été détourées par soft matte,
+despill et exportées en PNG alpha avant l'import Godot.
+
+## `whispering_woods_hub_v1.png`
+
+- Usage : arrière-plan de la zone d’exploration avant le combat.
+- Direction : carte forestière isométrique 2.5D connectée, avec cercle de réunion,
+  marché, emplacement de décoration, sanctuaire, ressources et clairière.
+- Composition : les landmarks jouables restent dans les 72 % gauches afin de
+  conserver un HUD mobile permanent à droite.
+- Contraintes : environnement uniquement, aucun personnage, texte, UI ou grille.
+
+## `owl_sage_v1.png`
+
+- Usage : PNJ de la quête composite `First Bloom` du POC.
+- Direction : hibou anthropomorphe bienveillant, manteau de sage végétal et bâton,
+  vue trois-quarts compatible avec les sprites existants.
+- Détourage : chroma `#ff00ff`, soft matte strict et despill. Le seuil opaque a
+  été resserré pour conserver les tons bruns du plumage.
 
 ## Production
 

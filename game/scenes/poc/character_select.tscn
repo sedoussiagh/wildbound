@@ -1,0 +1,175 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/poc/character_select.gd" id="1_select"]
+[ext_resource type="Texture2D" path="res://assets/world/whispering_woods_hub_v1.png" id="2_background"]
+[ext_resource type="Theme" path="res://resources/themes/wildbound_theme.tres" id="3_theme"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hero_card.tscn" id="4_card"]
+[ext_resource type="Resource" path="res://resources/heroes/wolf_guardian.tres" id="5_wolf"]
+[ext_resource type="Resource" path="res://resources/heroes/fox_mystic.tres" id="6_fox"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/confirm.png" id="7_confirm"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/cancel.png" id="8_cancel"]
+
+[sub_resource type="StyleBoxFlat" id="MainPanel"]
+bg_color = Color(0.025, 0.085, 0.1, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.47, 0.85, 0.73, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="ConfirmNormal"]
+bg_color = Color(0.14, 0.49, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 1, 0.85, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="ConfirmHover"]
+bg_color = Color(0.18, 0.61, 0.49, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 1, 0.91, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[node name="CharacterSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_theme")
+script = ExtResource("1_select")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.05, 0.065, 0.68)
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 18
+
+[node name="Center" type="CenterContainer" parent="SafeArea"]
+layout_mode = 2
+
+[node name="MainPanel" type="PanelContainer" parent="SafeArea/Center"]
+custom_minimum_size = Vector2(980, 660)
+layout_mode = 2
+theme_override_styles/panel = SubResource("MainPanel")
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/MainPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 24
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/MainPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="SafeArea/Center/MainPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 1, 0.96, 1)
+theme_override_font_sizes/font_size = 34
+text = "CHOISISSEZ VOTRE HÉROS"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="SafeArea/Center/MainPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.85, 0.78, 1)
+theme_override_font_sizes/font_size = 16
+text = "Dans WILDBOUND, vous êtes l’animal. Chaque classe possède son propre style de combat."
+horizontal_alignment = 1
+
+[node name="Cards" type="HBoxContainer" parent="SafeArea/Center/MainPanel/Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="WolfGuardianCard" parent="SafeArea/Center/MainPanel/Margin/Content/Cards" instance=ExtResource("4_card")]
+unique_name_in_owner = true
+layout_mode = 2
+hero_definition = ExtResource("5_wolf")
+accent_color = Color(0.45, 0.83, 0.7, 1)
+
+[node name="FoxMysticCard" parent="SafeArea/Center/MainPanel/Margin/Content/Cards" instance=ExtResource("4_card")]
+unique_name_in_owner = true
+layout_mode = 2
+hero_definition = ExtResource("6_fox")
+accent_color = Color(0.4, 0.85, 1, 1)
+
+[node name="SelectionLabel" type="Label" parent="SafeArea/Center/MainPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.89, 0.61, 1)
+text = "Héros sélectionné"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CancelButton" type="Button" parent="SafeArea/Center/MainPanel/Margin/Content"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Annuler"
+icon = ExtResource("8_cancel")
+expand_icon = true
+
+[node name="ConfirmButton" type="Button" parent="SafeArea/Center/MainPanel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+theme_override_styles/normal = SubResource("ConfirmNormal")
+theme_override_styles/hover = SubResource("ConfirmHover")
+theme_override_styles/pressed = SubResource("ConfirmHover")
+theme_override_styles/focus = SubResource("ConfirmHover")
+text = "Commencer"
+icon = ExtResource("7_confirm")
+expand_icon = true

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/hero_definition.gd" id="1_definition"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/spark_bolt.png" id="2_skill"]
+[ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/walk_0.png" id="3_walk0"]
+[ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/walk_1.png" id="4_walk1"]
+[ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/walk_2.png" id="5_walk2"]
+[ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/walk_3.png" id="6_walk3"]
+[ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/attack_0.png" id="7_attack0"]
+[ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/attack_1.png" id="8_attack1"]
+[ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/attack_2.png" id="9_attack2"]
+[ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/attack_3.png" id="10_attack3"]
+
+[resource]
+script = ExtResource("1_definition")
+hero_id = "class.fox_mystic"
+display_name = "Fox Mystic"
+animal = "Fox"
+description = "Fragile mais mobile. Il frappe à distance et dépend de sa ligne de vue."
+role = "Ranged damage · Terrain control"
+difficulty = "Medium"
+evolutions = PackedStringArray("Flame Fox", "Mist Fox")
+max_health = 100
+power = 24
+guard = 8
+speed = 12
+focus = 14
+resolve = 8
+basic_skill = "Spark Bolt"
+basic_skill_id = "skill.spark_bolt"
+basic_skill_power = 18
+basic_skill_scaling = 0.75
+basic_skill_range = 4
+requires_line_of_sight = true
+skill_icon = ExtResource("2_skill")
+portrait = ExtResource("3_walk0")
+walk_frames = Array[Texture2D]([ExtResource("3_walk0"), ExtResource("4_walk1"), ExtResource("5_walk2"), ExtResource("6_walk3")])
+attack_frames = Array[Texture2D]([ExtResource("7_attack0"), ExtResource("8_attack1"), ExtResource("9_attack2"), ExtResource("10_attack3")])

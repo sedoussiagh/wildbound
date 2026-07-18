@@ -5,6 +5,8 @@ extends RefCounted
 ## Traces: system.combat@1.0.0, class.wolf_guardian@1.0.0,
 ## monster.moss_slime@1.0.0.
 
+const HeroCatalogScript = preload("res://scripts/characters/hero_catalog.gd")
+
 const GRID_SIZE := 7
 const PLAYER_MAX_HEALTH := 125
 const PLAYER_POWER := 18
@@ -32,7 +34,18 @@ var player_position := Vector2i(1, 3)
 var enemy_position := Vector2i(5, 3)
 var obstacles: Array[Vector2i] = [Vector2i(3, 2), Vector2i(3, 3)]
 
-var player_health := PLAYER_MAX_HEALTH
+var hero_class_id := HeroCatalogScript.WOLF_GUARDIAN
+var player_display_name := "Wolf Guardian"
+var player_max_health := PLAYER_MAX_HEALTH
+var player_power := PLAYER_POWER
+var player_guard := PLAYER_GUARD
+var player_basic_skill_name := "Claw Strike"
+var player_basic_skill_power := CLAW_STRIKE_POWER
+var player_basic_skill_scaling := CLAW_STRIKE_SCALING
+var player_basic_skill_range := 1
+var player_requires_line_of_sight := false
+
+var player_health := player_max_health
 var enemy_health := ENEMY_MAX_HEALTH
 var player_ap := PLAYER_MAX_AP
 var player_mp := PLAYER_MAX_MP
@@ -44,10 +57,25 @@ var is_game_over := false
 var outcome := ""
 
 
+func configure_hero(hero_id: String) -> void:
+	var hero := HeroCatalogScript.get_hero(hero_id)
+	hero_class_id = hero_id if HeroCatalogScript.is_valid(hero_id) else HeroCatalogScript.WOLF_GUARDIAN
+	player_display_name = str(hero.display_name)
+	player_max_health = int(hero.max_health)
+	player_power = int(hero.power)
+	player_guard = int(hero.guard)
+	player_basic_skill_name = str(hero.basic_skill)
+	player_basic_skill_power = int(hero.basic_skill_power)
+	player_basic_skill_scaling = float(hero.basic_skill_scaling)
+	player_basic_skill_range = int(hero.basic_skill_range)
+	player_requires_line_of_sight = bool(hero.requires_line_of_sight)
+	reset()
+
+
 func reset() -> void:
 	player_position = Vector2i(1, 3)
 	enemy_position = Vector2i(5, 3)
-	player_health = PLAYER_MAX_HEALTH
+	player_health = player_max_health
 	enemy_health = ENEMY_MAX_HEALTH
 	player_ap = PLAYER_MAX_AP
 	player_mp = PLAYER_MAX_MP
@@ -106,7 +134,7 @@ func try_player_move(target: Vector2i) -> Dictionary:
 	if not is_inside(target):
 		return _failure("Cette case est hors de la grille.")
 	if target == player_position:
-		return _failure("Wolf Guardian occupe déjà cette case.")
+		return _failure("%s occupe déjà cette case." % player_display_name)
 	if target == enemy_position:
 		return _failure("Moss Slime occupe cette case.")
 	if target in obstacles:
@@ -133,34 +161,49 @@ func try_player_move(target: Vector2i) -> Dictionary:
 
 
 func can_use_claw_strike(target: Vector2i = enemy_position) -> bool:
+	return can_use_basic_attack(target)
+
+
+func can_use_basic_attack(target: Vector2i = enemy_position) -> bool:
 	return (
 		is_player_turn
 		and not is_game_over
 		and player_ap >= 1
 		and enemy_health > 0
 		and target == enemy_position
-		and manhattan_distance(player_position, enemy_position) == 1
+		and manhattan_distance(player_position, enemy_position) <= player_basic_skill_range
+		and (not player_requires_line_of_sight or has_line_of_sight(player_position, enemy_position))
 	)
 
 
 func preview_claw_strike_damage() -> int:
-	return calculate_damage(CLAW_STRIKE_POWER, PLAYER_POWER, ENEMY_GUARD, CLAW_STRIKE_SCALING)
+	return preview_basic_attack_damage()
+
+
+func preview_basic_attack_damage() -> int:
+	return calculate_damage(player_basic_skill_power, player_power, ENEMY_GUARD, player_basic_skill_scaling)
 
 
 func player_claw_strike(target: Vector2i) -> Dictionary:
+	return player_basic_attack(target)
+
+
+func player_basic_attack(target: Vector2i) -> Dictionary:
 	if is_game_over:
 		return _failure("Le combat est terminé.")
 	if not is_player_turn:
-		return _failure("Ce n'est pas le tour de Wolf Guardian.")
+		return _failure("Ce n'est pas le tour de %s." % player_display_name)
 	if player_ap < 1:
-		return _failure("Pas assez d'AP pour Claw Strike.")
+		return _failure("Pas assez d'AP pour %s." % player_basic_skill_name)
 	if target != enemy_position or enemy_health <= 0:
-		return _failure("Claw Strike doit cibler Moss Slime.")
-	if manhattan_distance(player_position, enemy_position) != 1:
-		return _failure("Moss Slime doit être sur une case adjacente.")
+		return _failure("%s doit cibler Moss Slime." % player_basic_skill_name)
+	if manhattan_distance(player_position, enemy_position) > player_basic_skill_range:
+		return _failure("Moss Slime est hors de portée (portée %d)." % player_basic_skill_range)
+	if player_requires_line_of_sight and not has_line_of_sight(player_position, enemy_position):
+		return _failure("Un obstacle bloque la ligne de vue.")
 
 	player_ap -= 1
-	var damage := preview_claw_strike_damage()
+	var damage := preview_basic_attack_damage()
 	enemy_health = max(0, enemy_health - damage)
 	if enemy_health == 0:
 		is_game_over = true
@@ -169,7 +212,7 @@ func player_claw_strike(target: Vector2i) -> Dictionary:
 	return {
 		"ok": true,
 		"type": "player_attack",
-		"skill": "Claw Strike",
+		"skill": player_basic_skill_name,
 		"damage": damage,
 		"enemy_health": enemy_health,
 		"victory": outcome == "victory",
@@ -180,7 +223,7 @@ func end_player_turn() -> Dictionary:
 	if is_game_over:
 		return _failure("Le combat est terminé.")
 	if not is_player_turn:
-		return _failure("Le tour de Wolf Guardian est déjà terminé.")
+		return _failure("Le tour de %s est déjà terminé." % player_display_name)
 
 	is_player_turn = false
 	var events := _resolve_enemy_turn()
@@ -216,7 +259,7 @@ func _resolve_enemy_turn() -> Array[Dictionary]:
 		and manhattan_distance(enemy_position, player_position) == 1
 	):
 		enemy_ap -= 1
-		var damage := calculate_damage(SOFT_BUMP_POWER, ENEMY_POWER, PLAYER_GUARD, SOFT_BUMP_SCALING)
+		var damage := calculate_damage(SOFT_BUMP_POWER, ENEMY_POWER, player_guard, SOFT_BUMP_SCALING)
 		player_health = max(0, player_health - damage)
 		events.append({
 			"type": "enemy_attack",
@@ -250,6 +293,22 @@ func _best_enemy_path_to_player() -> Array[Vector2i]:
 		if best_path.is_empty() or path.size() < best_path.size():
 			best_path = path
 	return best_path
+
+
+func has_line_of_sight(from_cell: Vector2i, to_cell: Vector2i) -> bool:
+	var delta := to_cell - from_cell
+	var steps: int = maxi(abs(delta.x), abs(delta.y))
+	if steps <= 1:
+		return true
+	for index in range(1, steps):
+		var progress := float(index) / float(steps)
+		var sample := Vector2i(
+			roundi(lerpf(float(from_cell.x), float(to_cell.x), progress)),
+			roundi(lerpf(float(from_cell.y), float(to_cell.y), progress))
+		)
+		if sample in obstacles:
+			return false
+	return true
 
 
 func _find_path(start: Vector2i, target: Vector2i, occupied_cell: Vector2i) -> Array[Vector2i]:

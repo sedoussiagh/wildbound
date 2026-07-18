@@ -1,6 +1,29 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/poc/battle_poc.gd" id="1_battle"]
+[ext_resource type="Script" path="res://scripts/poc/battle_board.gd" id="2_board"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/whispering_woods_arena_v1.png" id="3_background"]
+[ext_resource type="Theme" path="res://resources/themes/wildbound_theme.tres" id="4_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/move.png" id="5_move"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/claw_strike.png" id="6_attack"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/cancel.png" id="7_cancel"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/end_turn.png" id="8_end"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/restart.png" id="9_restart"]
+
+[sub_resource type="StyleBoxFlat" id="CombatPanel"]
+bg_color = Color(0.035, 0.085, 0.1, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.71, 0.62, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.48)
+shadow_size = 12
+shadow_offset = Vector2(-4, 6)
 
 [node name="BattlePoc" type="Control"]
 layout_mode = 3
@@ -9,5 +32,189 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("4_theme")
 script = ExtResource("1_battle")
 
+[node name="WhisperingWoodsBackground" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Atmosphere" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.055, 0.065, 0.3)
+
+[node name="BattleBoard" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 0.67
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -8.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 2
+mouse_default_cursor_shape = 2
+script = ExtResource("2_board")
+
+[node name="CombatHUD" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.68
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("CombatPanel")
+
+[node name="Margin" type="MarginContainer" parent="CombatHUD"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 17
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 17
+
+[node name="Scroll" type="ScrollContainer" parent="CombatHUD/Margin"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Content" type="VBoxContainer" parent="CombatHUD/Margin/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 1, 0.94, 1)
+theme_override_font_sizes/font_size = 29
+text = "WILDBOUND"
+
+[node name="Subtitle" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.84, 0.77, 1)
+text = "Whispering Woods · Combat isométrique 2.5D"
+
+[node name="HeaderSeparator" type="HSeparator" parent="CombatHUD/Margin/Scroll/Content"]
+layout_mode = 2
+
+[node name="TurnLabel" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.6, 1)
+theme_override_font_sizes/font_size = 21
+text = "Tour 1 · Player"
+
+[node name="StatsLabel" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Player stats\nMoss Slime stats"
+autowrap_mode = 2
+
+[node name="InstructionLabel" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.92, 0.9, 1)
+text = "Choisissez une action, puis touchez une case."
+autowrap_mode = 2
+
+[node name="MoveButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+tooltip_text = "Quitte le ciblage d'une compétence et revient au déplacement."
+text = "Déplacement"
+icon = ExtResource("5_move")
+expand_icon = true
+icon_alignment = 0
+
+[node name="AttackButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+text = "Claw Strike · 1 AP"
+icon = ExtResource("6_attack")
+expand_icon = true
+icon_alignment = 0
+
+[node name="CancelButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+text = "Annuler la sélection"
+icon = ExtResource("7_cancel")
+expand_icon = true
+icon_alignment = 0
+
+[node name="EndTurnButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+tooltip_text = "Passe la main à Moss Slime. Les AP et MP restants sont perdus."
+text = "Terminer le tour"
+icon = ExtResource("8_end")
+expand_icon = true
+icon_alignment = 0
+
+[node name="StatusLabel" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.54, 1)
+theme_override_font_sizes/font_size = 16
+text = "Déplacement : choisissez une tuile marquée M."
+autowrap_mode = 2
+
+[node name="LogSeparator" type="HSeparator" parent="CombatHUD/Margin/Scroll/Content"]
+layout_mode = 2
+
+[node name="LogTitle" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Journal du combat"
+
+[node name="LogLabel" type="RichTextLabel" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+text = "Le journal du combat apparaît ici."
+fit_content = true
+scroll_active = false
+
+[node name="RestartButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+text = "Recommencer"
+icon = ExtResource("9_restart")
+expand_icon = true
+icon_alignment = 0
+
+[node name="KeyboardHelp" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.66, 0.64, 1)
+theme_override_font_sizes/font_size = 13
+text = "Clavier : flèches + Entrée · A attaque · E termine · R recommence"
+autowrap_mode = 2

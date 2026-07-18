@@ -1,23 +1,11 @@
+@tool
 class_name BattleBoard
 extends Control
 
 signal cell_pressed(cell: Vector2i)
 
+const HeroCatalogScript = preload("res://scripts/characters/hero_catalog.gd")
 const GRID_SIZE := 7
-const WOLF_TEXTURE: Texture2D = preload("res://assets/characters/wolf_guardian_v1.png")
-const SLIME_TEXTURE: Texture2D = preload("res://assets/characters/moss_slime_v1.png")
-const WOLF_WALK_FRAMES := [
-	preload("res://assets/characters/wolf_guardian/walk_0.png"),
-	preload("res://assets/characters/wolf_guardian/walk_1.png"),
-	preload("res://assets/characters/wolf_guardian/walk_2.png"),
-	preload("res://assets/characters/wolf_guardian/walk_3.png"),
-]
-const WOLF_ATTACK_FRAMES := [
-	preload("res://assets/characters/wolf_guardian/attack_0.png"),
-	preload("res://assets/characters/wolf_guardian/attack_1.png"),
-	preload("res://assets/characters/wolf_guardian/attack_2.png"),
-	preload("res://assets/characters/wolf_guardian/attack_3.png"),
-]
 const SLIME_WALK_FRAMES := [
 	preload("res://assets/characters/moss_slime/walk_0.png"),
 	preload("res://assets/characters/moss_slime/walk_1.png"),
@@ -30,6 +18,12 @@ const SLIME_ATTACK_FRAMES := [
 	preload("res://assets/characters/moss_slime/attack_2.png"),
 	preload("res://assets/characters/moss_slime/attack_3.png"),
 ]
+
+@export_category("Editor Preview")
+@export var editor_obstacles: Array[Vector2i] = [Vector2i(3, 2), Vector2i(3, 3)]
+@export var even_tile_color := Color(0.13, 0.34, 0.24, 0.11)
+@export var odd_tile_color := Color(0.24, 0.44, 0.27, 0.07)
+@export var grid_line_color := Color(0.80, 0.96, 0.73, 0.30)
 
 var combat_state
 var movement_cells: Array[Vector2i] = []
@@ -83,6 +77,14 @@ var slash_strength := 0.0:
 	set(value):
 		slash_strength = value
 		queue_redraw()
+var spark_strength := 0.0:
+	set(value):
+		spark_strength = value
+		queue_redraw()
+var spark_progress := 0.0:
+	set(value):
+		spark_progress = value
+		queue_redraw()
 var player_alpha := 1.0:
 	set(value):
 		player_alpha = value
@@ -112,7 +114,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_animation_clock += delta
 	if _player_animation == "walk":
-		_player_frame = int(floor(_animation_clock * 9.0)) % WOLF_WALK_FRAMES.size()
+		_player_frame = int(floor(_animation_clock * 9.0)) % _player_walk_frames().size()
 	if _enemy_animation == "walk":
 		_enemy_frame = int(floor(_animation_clock * 8.0)) % SLIME_WALK_FRAMES.size()
 	queue_redraw()
@@ -137,6 +139,8 @@ func sync_visual_positions() -> void:
 	player_flash = 0.0
 	enemy_flash = 0.0
 	slash_strength = 0.0
+	spark_strength = 0.0
+	spark_progress = 0.0
 	_player_animation = "idle"
 	_enemy_animation = "idle"
 	_player_frame = 0
@@ -154,7 +158,7 @@ func get_cell_description(cell: Vector2i) -> String:
 	if combat_state == null:
 		return "Case %s" % coordinate
 	if cell == combat_state.player_position:
-		return "Case %s, Wolf Guardian, %d points de vie." % [coordinate, combat_state.player_health]
+		return "Case %s, %s, %d points de vie." % [coordinate, combat_state.player_display_name, combat_state.player_health]
 	if cell == combat_state.enemy_position:
 		return "Case %s, Moss Slime, %d points de vie." % [coordinate, combat_state.enemy_health]
 	if cell in combat_state.obstacles:
@@ -232,6 +236,55 @@ func animate_claw_strike(damage: int) -> void:
 	recover.tween_property(self, "enemy_offset", Vector2.ZERO, 0.14).set_trans(Tween.TRANS_ELASTIC)
 	recover.tween_property(self, "enemy_scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BOUNCE)
 	await recover.finished
+	_player_animation = "idle"
+	_player_frame = 0
+	is_animating = false
+
+
+func animate_player_attack(damage: int) -> void:
+	if combat_state.player_basic_skill_name == "Spark Bolt":
+		await animate_spark_bolt(damage)
+	else:
+		await animate_claw_strike(damage)
+
+
+func animate_spark_bolt(damage: int) -> void:
+	is_animating = true
+	_player_animation = "attack"
+	_player_frame = 0
+
+	var windup := create_tween().set_parallel(true)
+	windup.tween_property(self, "player_scale", Vector2(0.94, 1.08), 0.12).set_trans(Tween.TRANS_QUAD)
+	windup.tween_property(self, "player_bounce", -7.0, 0.12).set_trans(Tween.TRANS_QUAD)
+	await windup.finished
+	_player_frame = 1
+	spark_strength = 1.0
+	spark_progress = 0.0
+
+	var cast := create_tween().set_parallel(true)
+	cast.tween_property(self, "spark_progress", 1.0, 0.30).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	cast.tween_property(self, "player_scale", Vector2(1.06, 0.96), 0.18).set_trans(Tween.TRANS_BACK)
+	await cast.finished
+	_player_frame = 2
+	enemy_flash = 1.0
+	show_damage_popup("enemy", damage)
+
+	var impact_direction := (_project_grid(enemy_visual_grid) - _project_grid(player_visual_grid)).normalized()
+	var impact := create_tween().set_parallel(true)
+	impact.tween_property(self, "enemy_offset", impact_direction * 14.0, 0.08)
+	impact.tween_property(self, "enemy_scale", Vector2(1.12, 0.88), 0.09)
+	impact.tween_property(self, "enemy_flash", 0.0, 0.24)
+	impact.tween_property(self, "spark_strength", 0.0, 0.20)
+	await impact.finished
+
+	_player_frame = 3
+	var recover := create_tween().set_parallel(true)
+	recover.tween_property(self, "player_scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_SINE)
+	recover.tween_property(self, "player_bounce", 0.0, 0.18).set_trans(Tween.TRANS_BOUNCE)
+	recover.tween_property(self, "enemy_offset", Vector2.ZERO, 0.14).set_trans(Tween.TRANS_ELASTIC)
+	recover.tween_property(self, "enemy_scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_BOUNCE)
+	await recover.finished
+	spark_progress = 0.0
 	_player_animation = "idle"
 	_player_frame = 0
 	is_animating = false
@@ -365,7 +418,7 @@ func _draw() -> void:
 				_draw_tile(Vector2i(x, y))
 
 	for depth in range(GRID_SIZE * 2 - 1):
-		for obstacle in combat_state.obstacles if combat_state != null else []:
+		for obstacle in combat_state.obstacles if combat_state != null else editor_obstacles:
 			if obstacle.x + obstacle.y == depth:
 				_draw_obstacle(obstacle)
 
@@ -379,6 +432,8 @@ func _draw() -> void:
 			_draw_enemy()
 			_draw_player()
 		_draw_combat_effects()
+	elif Engine.is_editor_hint():
+		_draw_editor_units()
 
 
 func _update_projection() -> void:
@@ -424,9 +479,9 @@ func _closed_diamond(center: Vector2, inset_scale: float = 1.0) -> PackedVector2
 func _draw_tile(cell: Vector2i) -> void:
 	var center := _project_cell(cell)
 	var top := _diamond(center)
-	var tile_color := Color(0.13, 0.34, 0.24, 0.11) if (cell.x + cell.y) % 2 == 0 else Color(0.24, 0.44, 0.27, 0.07)
+	var tile_color := even_tile_color if (cell.x + cell.y) % 2 == 0 else odd_tile_color
 	draw_colored_polygon(top, tile_color)
-	draw_polyline(_closed_diamond(center), Color(0.80, 0.96, 0.73, 0.30), 1.2, true)
+	draw_polyline(_closed_diamond(center), grid_line_color, 1.2, true)
 
 	var grass_x := sin(float(cell.x * 9 + cell.y * 4)) * _tile_width * 0.16
 	var grass_origin := center + Vector2(grass_x, _tile_height * 0.12)
@@ -487,16 +542,28 @@ func _draw_obstacle(cell: Vector2i) -> void:
 	draw_circle(top_center + Vector2(width * 0.18, -1), maxf(2.0, width * 0.16), Color("#82a24e"))
 
 
+func _draw_editor_units() -> void:
+	var wolf_definition := HeroCatalogScript.get_definition(HeroCatalogScript.WOLF_GUARDIAN)
+	var player_foot := _project_grid(Vector2(1, 3)) + Vector2(0, _tile_height * 0.16)
+	var enemy_foot := _project_grid(Vector2(5, 3)) + Vector2(0, _tile_height * 0.18)
+	_draw_unit_shadow(player_foot, _tile_width * 0.34, 1.0)
+	_draw_unit_texture(wolf_definition.walk_frames[0], player_foot, _tile_width * 1.90, Vector2.ONE, Color.WHITE)
+	_draw_unit_health(player_foot + Vector2(0, -_tile_width * 1.90 - 5), 125, 125, Color("#63e4ab"), "Player preview")
+	_draw_unit_shadow(enemy_foot, _tile_width * 0.30, 1.0)
+	_draw_unit_texture(SLIME_WALK_FRAMES[0], enemy_foot, _tile_width * 1.18, Vector2.ONE, Color.WHITE)
+	_draw_unit_health(enemy_foot + Vector2(0, -_tile_width * 1.18 - 4), 55, 55, Color("#ff8a70"), "Moss Slime")
+
+
 func _draw_player() -> void:
 	if player_alpha <= 0.01:
 		return
 	var idle := sin(_animation_clock * 2.4) * 2.2
 	var foot := _project_grid(player_visual_grid) + player_offset + Vector2(0, player_bounce + idle + _tile_height * 0.16)
 	_draw_unit_shadow(foot, _tile_width * 0.34, player_alpha)
-	var height := _tile_width * 1.90
+	var height := _tile_width * (1.72 if combat_state.hero_class_id == "class.fox_mystic" else 1.90)
 	var color := Color(1.0, 0.76 + player_flash * 0.24, 0.76 + player_flash * 0.24, player_alpha)
 	_draw_unit_texture(_current_player_texture(), foot, height, player_scale, color)
-	_draw_unit_health(foot + Vector2(0, -height - 5), combat_state.player_health, combat_state.PLAYER_MAX_HEALTH, Color("#63e4ab"), "Wolf Guardian")
+	_draw_unit_health(foot + Vector2(0, -height - 5), combat_state.player_health, combat_state.player_max_health, Color("#63e4ab"), combat_state.player_display_name)
 
 
 func _draw_enemy() -> void:
@@ -512,9 +579,21 @@ func _draw_enemy() -> void:
 
 
 func _current_player_texture() -> Texture2D:
+	var walk_frames := _player_walk_frames()
+	var attack_frames := _player_attack_frames()
 	if _player_animation == "attack":
-		return WOLF_ATTACK_FRAMES[clampi(_player_frame, 0, WOLF_ATTACK_FRAMES.size() - 1)] as Texture2D
-	return WOLF_WALK_FRAMES[clampi(_player_frame, 0, WOLF_WALK_FRAMES.size() - 1)] as Texture2D
+		return attack_frames[clampi(_player_frame, 0, attack_frames.size() - 1)] as Texture2D
+	return walk_frames[clampi(_player_frame, 0, walk_frames.size() - 1)] as Texture2D
+
+
+func _player_walk_frames() -> Array:
+	var hero_id: String = combat_state.hero_class_id if combat_state != null else HeroCatalogScript.WOLF_GUARDIAN
+	return HeroCatalogScript.get_definition(hero_id).walk_frames
+
+
+func _player_attack_frames() -> Array:
+	var hero_id: String = combat_state.hero_class_id if combat_state != null else HeroCatalogScript.WOLF_GUARDIAN
+	return HeroCatalogScript.get_definition(hero_id).attack_frames
 
 
 func _current_enemy_texture() -> Texture2D:
@@ -562,6 +641,15 @@ func _draw_combat_effects() -> void:
 		for index in range(3):
 			var shift := float(index - 1) * 11.0
 			draw_line(center + Vector2(-28, 22 + shift), center + Vector2(24, -24 + shift), slash_color, 5.0)
+	if spark_strength > 0.01:
+		var start := _project_grid(player_visual_grid) + player_offset + Vector2(0, -_tile_height * 1.10)
+		var target := _project_grid(enemy_visual_grid) + enemy_offset + Vector2(0, -_tile_height * 0.72)
+		var bolt_position := start.lerp(target, spark_progress)
+		var trail_start := start.lerp(target, maxf(0.0, spark_progress - 0.22))
+		draw_line(trail_start, bolt_position, Color(0.20, 0.92, 1.0, spark_strength * 0.65), 8.0)
+		draw_circle(bolt_position, _tile_width * 0.15, Color(0.18, 0.92, 1.0, spark_strength * 0.24))
+		draw_circle(bolt_position, _tile_width * 0.085, Color(0.48, 0.97, 1.0, spark_strength))
+		draw_circle(bolt_position, _tile_width * 0.035, Color(1.0, 0.84, 0.32, spark_strength))
 
 
 func _draw_board_shadow() -> void:

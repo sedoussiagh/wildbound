@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="WILDBOUND"
-run/main_scene="res://scenes/poc/battle_poc.tscn"
+run/main_scene="res://scenes/poc/game_flow.tscn"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
 

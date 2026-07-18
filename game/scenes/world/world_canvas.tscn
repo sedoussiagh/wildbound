@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/world_canvas.gd" id="1_canvas"]
+
+[node name="WorldCanvas" type="Control"]
+custom_minimum_size = Vector2(920, 720)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_canvas")
+
+[node name="InteractionMarkers" type="Node2D" parent="."]
+
+[node name="OwlSage" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(165, 260)
+
+[node name="TradePost" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(398, 180)
+
+[node name="MoonShrine" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(748, 186)
+
+[node name="HomePlot" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(170, 455)
+
+[node name="BerryNorth" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(278, 342)
+
+[node name="BerrySouth" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(445, 555)
+
+[node name="BerryEast" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(825, 475)
+
+[node name="Traveler" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(350, 490)
+
+[node name="MossSlimeWoods" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(690, 338)

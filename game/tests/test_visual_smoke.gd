@@ -22,11 +22,9 @@ func _run_visual_smoke_test() -> void:
 	_assert_equal(battle.combat_state.player_health, 86, "Three animated Soft Bumps resolve correctly")
 
 	battle._on_attack_pressed()
-	battle.selected_target = battle.combat_state.enemy_position
-	await battle._execute_claw_strike()
+	await battle._on_cell_pressed(battle.combat_state.enemy_position)
 	battle._on_attack_pressed()
-	battle.selected_target = battle.combat_state.enemy_position
-	await battle._execute_claw_strike()
+	await battle._on_cell_pressed(battle.combat_state.enemy_position)
 	_assert_equal(battle.combat_state.outcome, "victory", "Animated encounter reaches victory")
 	_assert_equal(battle.board.enemy_alpha, 0.0, "Victory animation fades Moss Slime")
 
@@ -43,4 +41,3 @@ func _assert_equal(actual, expected, label: String) -> void:
 		return
 	failures += 1
 	printerr("FAIL: %s — expected %s, got %s" % [label, str(expected), str(actual)])
-

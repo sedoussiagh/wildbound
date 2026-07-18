@@ -1,0 +1,17 @@
+# Godot generated caches
+**/.godot/
+**/.import/
+
+# Generated platform and build output
+game/android/
+game/build/
+game/exports/
+*.apk
+*.aab
+*.ipa
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

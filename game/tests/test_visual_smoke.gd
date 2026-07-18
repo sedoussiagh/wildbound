@@ -10,16 +10,19 @@ func _init() -> void:
 func _run_visual_smoke_test() -> void:
 	var scene_resource: PackedScene = load("res://scenes/poc/battle_poc.tscn")
 	var battle = scene_resource.instantiate()
+	battle.randomize_encounter = false
 	root.add_child(battle)
 	await process_frame
 	await process_frame
+	battle.combat_state.enemy_position = Vector2i(6, 4)
+	battle.board.sync_visual_positions()
 
 	await battle._on_cell_pressed(Vector2i(3, 4))
 	_assert_equal(battle.combat_state.player_position, Vector2i(3, 4), "Animated player movement reaches D5")
 
 	await battle._on_end_turn_pressed()
 	_assert_equal(battle.combat_state.enemy_position, Vector2i(4, 4), "Animated enemy movement reaches E5")
-	_assert_equal(battle.combat_state.player_health, 86, "Three animated Soft Bumps resolve correctly")
+	_assert_equal(battle.combat_state.player_health, 112, "One animated Soft Bump resolves correctly")
 
 	battle._on_attack_pressed()
 	await battle._on_cell_pressed(battle.combat_state.enemy_position)

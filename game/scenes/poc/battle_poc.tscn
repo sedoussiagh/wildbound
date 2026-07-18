@@ -1,29 +1,129 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=20 format=3]
 
 [ext_resource type="Script" path="res://scripts/poc/battle_poc.gd" id="1_battle"]
 [ext_resource type="Script" path="res://scripts/poc/battle_board.gd" id="2_board"]
 [ext_resource type="Texture2D" path="res://assets/backgrounds/whispering_woods_arena_v1.png" id="3_background"]
 [ext_resource type="Theme" path="res://resources/themes/wildbound_theme.tres" id="4_theme"]
-[ext_resource type="Texture2D" path="res://assets/ui/icons/move.png" id="5_move"]
 [ext_resource type="Texture2D" path="res://assets/ui/icons/claw_strike.png" id="6_attack"]
-[ext_resource type="Texture2D" path="res://assets/ui/icons/cancel.png" id="7_cancel"]
 [ext_resource type="Texture2D" path="res://assets/ui/icons/end_turn.png" id="8_end"]
 [ext_resource type="Texture2D" path="res://assets/ui/icons/restart.png" id="9_restart"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/change_hero.svg" id="10_change"]
 
-[sub_resource type="StyleBoxFlat" id="CombatPanel"]
-bg_color = Color(0.035, 0.085, 0.1, 0.94)
+[sub_resource type="StyleBoxFlat" id="GlassPanel"]
+bg_color = Color(0.018, 0.055, 0.066, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45, 0.74, 0.66, 0.62)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.38)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="SpellPanel"]
+bg_color = Color(0.02, 0.07, 0.08, 0.94)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.45, 0.71, 0.62, 1)
+border_color = Color(0.45, 0.84, 0.74, 0.78)
 corner_radius_top_left = 18
 corner_radius_top_right = 18
 corner_radius_bottom_right = 18
 corner_radius_bottom_left = 18
-shadow_color = Color(0, 0, 0, 0.48)
-shadow_size = 12
-shadow_offset = Vector2(-4, 6)
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="TooltipPanel"]
+bg_color = Color(0.025, 0.075, 0.09, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.78, 0.34, 0.82)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="IconNormal"]
+bg_color = Color(0.10, 0.24, 0.23, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.31, 0.57, 0.52, 0.9)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="IconHover"]
+bg_color = Color(0.19, 0.43, 0.36, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.4, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="ProgressBG"]
+bg_color = Color(0.01, 0.03, 0.04, 0.82)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="PlayerHPFill"]
+bg_color = Color(0.25, 0.86, 0.59, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="EnemyHPFill"]
+bg_color = Color(0.96, 0.34, 0.28, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="TimerFill"]
+bg_color = Color(0.33, 0.85, 0.94, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="APBadge"]
+bg_color = Color(0.28, 0.58, 0.96, 0.92)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="MPBadge"]
+bg_color = Color(0.25, 0.76, 0.48, 0.92)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="BattlePoc" type="Control"]
 layout_mode = 3
@@ -55,166 +155,406 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.015, 0.055, 0.065, 0.3)
+color = Color(0.01, 0.035, 0.045, 0.2)
 
 [node name="BattleBoard" type="Control" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
-anchor_right = 0.67
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -8.0
-offset_bottom = -16.0
+offset_left = 100.0
+offset_top = 72.0
+offset_right = -10.0
+offset_bottom = -116.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 2
 mouse_default_cursor_shape = 2
 script = ExtResource("2_board")
 
-[node name="CombatHUD" type="PanelContainer" parent="."]
-unique_name_in_owner = true
+[node name="StatsHUD" type="PanelContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_left = 0.68
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
+anchor_left = 0.09
+anchor_right = 0.72
+offset_left = 0.0
+offset_top = 12.0
+offset_bottom = 70.0
 grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("CombatPanel")
+theme_override_styles/panel = SubResource("GlassPanel")
 
-[node name="Margin" type="MarginContainer" parent="CombatHUD"]
+[node name="Margin" type="MarginContainer" parent="StatsHUD"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 17
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 17
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 9
 
-[node name="Scroll" type="ScrollContainer" parent="CombatHUD/Margin"]
+[node name="Stats" type="HBoxContainer" parent="StatsHUD/Margin"]
 layout_mode = 2
-horizontal_scroll_mode = 0
+theme_override_constants/separation = 9
+alignment = 1
 
-[node name="Content" type="VBoxContainer" parent="CombatHUD/Margin/Scroll"]
+[node name="HeroNameLabel" type="Label" parent="StatsHUD/Margin/Stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 1, 0.93, 1)
+theme_override_font_sizes/font_size = 16
+text = "Wolf Guardian"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerHPMark" type="Label" parent="StatsHUD/Margin/Stats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.43, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "♥"
+
+[node name="PlayerHPBar" type="ProgressBar" parent="StatsHUD/Margin/Stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 17)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 9
+max_value = 125.0
+value = 125.0
+show_percentage = false
+theme_override_styles/background = SubResource("ProgressBG")
+theme_override_styles/fill = SubResource("PlayerHPFill")
 
-[node name="Title" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="PlayerHPValue" type="Label" parent="StatsHUD/Margin/Stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(65, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84, 1, 0.94, 1)
-theme_override_font_sizes/font_size = 29
-text = "WILDBOUND"
+theme_override_font_sizes/font_size = 13
+text = "125 / 125"
 
-[node name="Subtitle" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="APBadge" type="PanelContainer" parent="StatsHUD/Margin/Stats"]
+custom_minimum_size = Vector2(62, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.58, 0.84, 0.77, 1)
-text = "Whispering Woods · Combat isométrique 2.5D"
+theme_override_styles/panel = SubResource("APBadge")
 
-[node name="HeaderSeparator" type="HSeparator" parent="CombatHUD/Margin/Scroll/Content"]
-layout_mode = 2
-
-[node name="TurnLabel" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="PlayerAPValue" type="Label" parent="StatsHUD/Margin/Stats/APBadge"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.88, 0.6, 1)
-theme_override_font_sizes/font_size = 21
-text = "Tour 1 · Player"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "PA  3"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="StatsLabel" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="MPBadge" type="PanelContainer" parent="StatsHUD/Margin/Stats"]
+custom_minimum_size = Vector2(62, 36)
+layout_mode = 2
+theme_override_styles/panel = SubResource("MPBadge")
+
+[node name="PlayerMPValue" type="Label" parent="StatsHUD/Margin/Stats/MPBadge"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Player stats\nMoss Slime stats"
-autowrap_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "PM  3"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="InstructionLabel" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="EnemySeparator" type="VSeparator" parent="StatsHUD/Margin/Stats"]
+layout_mode = 2
+
+[node name="EnemyNameLabel" type="Label" parent="StatsHUD/Margin/Stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(105, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.72, 0.62, 1)
+text = "Moss Slimes ×1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EnemyHPBar" type="ProgressBar" parent="StatsHUD/Margin/Stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 17)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 55.0
+value = 55.0
+show_percentage = false
+theme_override_styles/background = SubResource("ProgressBG")
+theme_override_styles/fill = SubResource("EnemyHPFill")
+
+[node name="EnemyHPValue" type="Label" parent="StatsHUD/Margin/Stats"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "55 / 55"
+
+[node name="TurnHUD" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.735
+anchor_right = 1.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 106.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("GlassPanel")
+
+[node name="Margin" type="MarginContainer" parent="TurnHUD"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="TurnHUD/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Header" type="HBoxContainer" parent="TurnHUD/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="TurnLabel" type="Label" parent="TurnHUD/Margin/Content/Header"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84, 0.92, 0.9, 1)
-text = "Choisissez une action, puis touchez une case."
-autowrap_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.86, 0.54, 1)
+theme_override_font_sizes/font_size = 15
+text = "TOUR 1 · VOUS"
 
-[node name="MoveButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="TurnTimerLabel" type="Label" parent="TurnHUD/Margin/Content/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(38, 0)
 layout_mode = 2
-tooltip_text = "Quitte le ciblage d'une compétence et revient au déplacement."
-text = "Déplacement"
-icon = ExtResource("5_move")
-expand_icon = true
-icon_alignment = 0
+theme_override_colors/font_color = Color(0.8, 0.96, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "30s"
+horizontal_alignment = 2
 
-[node name="AttackButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="EndTurnButton" type="Button" parent="TurnHUD/Margin/Content/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(42, 38)
 layout_mode = 2
-text = "Claw Strike · 1 AP"
-icon = ExtResource("6_attack")
-expand_icon = true
-icon_alignment = 0
-
-[node name="CancelButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-text = "Annuler la sélection"
-icon = ExtResource("7_cancel")
-expand_icon = true
-icon_alignment = 0
-
-[node name="EndTurnButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-tooltip_text = "Passe la main à Moss Slime. Les AP et MP restants sont perdus."
-text = "Terminer le tour"
+tooltip_text = "Terminer le tour maintenant · raccourci E"
 icon = ExtResource("8_end")
 expand_icon = true
-icon_alignment = 0
+icon_alignment = 1
+theme_override_styles/normal = SubResource("IconNormal")
+theme_override_styles/hover = SubResource("IconHover")
+theme_override_styles/pressed = SubResource("IconHover")
+theme_override_styles/focus = SubResource("IconHover")
 
-[node name="StatusLabel" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="ChangeHeroButton" type="Button" parent="TurnHUD/Margin/Content/Header"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(42, 38)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.88, 0.54, 1)
-theme_override_font_sizes/font_size = 16
-text = "Déplacement : choisissez une tuile marquée M."
-autowrap_mode = 2
+tooltip_text = "Changer de personnage et recommencer ce combat · raccourci C"
+icon = ExtResource("10_change")
+expand_icon = true
+icon_alignment = 1
+theme_override_styles/normal = SubResource("IconNormal")
+theme_override_styles/hover = SubResource("IconHover")
+theme_override_styles/pressed = SubResource("IconHover")
+theme_override_styles/focus = SubResource("IconHover")
 
-[node name="LogSeparator" type="HSeparator" parent="CombatHUD/Margin/Scroll/Content"]
-layout_mode = 2
-
-[node name="LogTitle" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Journal du combat"
-
-[node name="LogLabel" type="RichTextLabel" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="RestartButton" type="Button" parent="TurnHUD/Margin/Content/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 100)
+visible = false
+custom_minimum_size = Vector2(42, 38)
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 14
-bbcode_enabled = true
-text = "Le journal du combat apparaît ici."
-fit_content = true
-scroll_active = false
-
-[node name="RestartButton" type="Button" parent="CombatHUD/Margin/Scroll/Content"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-text = "Recommencer"
+tooltip_text = "Recommencer"
 icon = ExtResource("9_restart")
 expand_icon = true
-icon_alignment = 0
+icon_alignment = 1
+theme_override_styles/normal = SubResource("IconNormal")
+theme_override_styles/hover = SubResource("IconHover")
+theme_override_styles/pressed = SubResource("IconHover")
 
-[node name="KeyboardHelp" type="Label" parent="CombatHUD/Margin/Scroll/Content"]
+[node name="ArenaLabel" type="Label" parent="TurnHUD/Margin/Content"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.56, 0.66, 0.64, 1)
-theme_override_font_sizes/font_size = 13
-text = "Clavier : flèches + Entrée · A attaque · E termine · R recommence"
+theme_override_colors/font_color = Color(0.6, 0.82, 0.76, 1)
+theme_override_font_sizes/font_size = 11
+text = "Moonlit Crossing · groupe de 1"
+
+[node name="TurnTimerBar" type="ProgressBar" parent="TurnHUD/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+max_value = 30.0
+value = 30.0
+show_percentage = false
+theme_override_styles/background = SubResource("ProgressBG")
+theme_override_styles/fill = SubResource("TimerFill")
+
+[node name="SpellDock" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_top = 0.32
+anchor_bottom = 0.78
+offset_left = 16.0
+offset_right = 102.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("SpellPanel")
+
+[node name="Margin" type="MarginContainer" parent="SpellDock"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 12
+
+[node name="Content" type="VBoxContainer" parent="SpellDock/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Title" type="Label" parent="SpellDock/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.85, 0.78, 1)
+theme_override_font_sizes/font_size = 11
+text = "SORTS"
+horizontal_alignment = 1
+
+[node name="AttackButton" type="Button" parent="SpellDock/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+tooltip_text = "Claw Strike"
+toggle_mode = true
+icon = ExtResource("6_attack")
+expand_icon = true
+icon_alignment = 1
+theme_override_styles/normal = SubResource("IconNormal")
+theme_override_styles/hover = SubResource("IconHover")
+theme_override_styles/pressed = SubResource("IconHover")
+theme_override_styles/focus = SubResource("IconHover")
+
+[node name="SkillButton2" type="Button" parent="SpellDock/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+tooltip_text = "Second sort"
+toggle_mode = true
+icon = ExtResource("6_attack")
+expand_icon = true
+icon_alignment = 1
+theme_override_styles/normal = SubResource("IconNormal")
+theme_override_styles/hover = SubResource("IconHover")
+theme_override_styles/pressed = SubResource("IconHover")
+theme_override_styles/focus = SubResource("IconHover")
+
+[node name="SkillButton3" type="Button" parent="SpellDock/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+tooltip_text = "Troisième sort"
+toggle_mode = true
+icon = ExtResource("6_attack")
+expand_icon = true
+icon_alignment = 1
+theme_override_styles/normal = SubResource("IconNormal")
+theme_override_styles/hover = SubResource("IconHover")
+theme_override_styles/pressed = SubResource("IconHover")
+theme_override_styles/focus = SubResource("IconHover")
+
+[node name="Shortcut" type="Label" parent="SpellDock/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.58, 0.55, 1)
+theme_override_font_sizes/font_size = 11
+text = "1 · 2 · 3"
+horizontal_alignment = 1
+
+[node name="SkillTooltip" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchor_top = 0.32
+offset_left = 16.0
+offset_top = -126.0
+offset_right = 350.0
+offset_bottom = -14.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("TooltipPanel")
+
+[node name="Margin" type="MarginContainer" parent="SkillTooltip"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 11
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 11
+
+[node name="SkillTooltipLabel" type="Label" parent="SkillTooltip/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 1, 0.96, 1)
+theme_override_font_sizes/font_size = 14
+text = "Claw Strike\n34 dégâts · 1 PA · portée 1\nCliquez l'icône, puis la cible."
 autowrap_mode = 2
+
+[node name="DialogueHUD" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_left = 0.09
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -108.0
+offset_right = -16.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("GlassPanel")
+
+[node name="Margin" type="MarginContainer" parent="DialogueHUD"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 9
+
+[node name="Content" type="HBoxContainer" parent="DialogueHUD/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Status" type="VBoxContainer" parent="DialogueHUD/Margin/Content"]
+custom_minimum_size = Vector2(390, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 3
+
+[node name="Title" type="Label" parent="DialogueHUD/Margin/Content/Status"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.78, 0.38, 1)
+theme_override_font_sizes/font_size = 11
+text = "ACTION"
+
+[node name="StatusLabel" type="Label" parent="DialogueHUD/Margin/Content/Status"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.95, 1, 0.97, 1)
+theme_override_font_sizes/font_size = 15
+text = "Déplacement libre · touchez une case cyan."
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="DialogueSeparator" type="VSeparator" parent="DialogueHUD/Margin/Content"]
+layout_mode = 2
+
+[node name="Log" type="VBoxContainer" parent="DialogueHUD/Margin/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 3
+
+[node name="Title" type="Label" parent="DialogueHUD/Margin/Content/Log"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.82, 0.92, 1)
+theme_override_font_sizes/font_size = 11
+text = "DIALOGUE / COMBAT"
+
+[node name="LogLabel" type="RichTextLabel" parent="DialogueHUD/Margin/Content/Log"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0.68, 0.8, 0.77, 1)
+theme_override_font_sizes/normal_font_size = 12
+text = "Le journal du combat apparaît ici."
+fit_content = false
+scroll_active = true

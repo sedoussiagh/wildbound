@@ -20,15 +20,19 @@ librement entre les deux sans perdre la progression.
   persistante `Glow Lantern`.
 - `River Scout` démontre la présentation d’une présence sociale ; son dialogue
   indique explicitement que le réseau n’est pas encore connecté dans ce POC.
-- Un seul toucher sur `Moss Slime` fait marcher le héros jusqu’à lui puis lance
-  le combat ; aucune seconde confirmation n’est nécessaire.
+- Trois rencontres visibles sont placées dans le monde : `Moss Slime` seul,
+  `Moss Slimes ×2` et `Moss Slimes ×3`. Un seul toucher fait marcher le héros
+  jusqu'au groupe puis lance le combat, sans seconde confirmation.
 - L’état est sauvegardé dans `user://wildbound_open_world_poc.json` après chaque
   interaction confirmée et avant/après un combat.
 
 ## Rendu 2.5D
 
-- Plateau 7×7 projeté en isométrie ; la grille tactique translucide est peinte
+- Plateau 9×9 projeté en isométrie ; la grille tactique translucide est peinte
   directement sur le sol de la map au lieu de former une plateforme séparée.
+- Quatre arènes choisies au lancement (`Moonlit Crossing`, `Moss Ring`,
+  `Broken Path`, `Twin Groves`) possèdent des obstacles et spawns différents.
+- Aucun chiffre ni nom de coordonnée n'est dessiné sur les cases.
 - Arrière-plan original de `Whispering Woods` avec profondeur atmosphérique.
 - Sprites illustrés de `Wolf Guardian`, `Fox Mystic` et `Moss Slime` avec ombre au sol.
 - Cycles illustrés de quatre poses pour la marche et l’attaque de chaque unité,
@@ -36,8 +40,10 @@ librement entre les deux sans perdre la progression.
   par case, l’anticipation et l’impact.
 - Dégâts flottants, squash/stretch, disparition et célébration.
 - Particules d’ambiance et HUD semi-transparent adapté au paysage mobile.
-- Icônes dédiées pour déplacement, attaque, confirmation, annulation, fin de tour
-  et redémarrage ; les libellés restent visibles pour l’accessibilité.
+- Dock minimaliste de trois sorts à gauche : icônes seules, description complète au
+  survol, état sélectionné visible et commandes secondaires séparées.
+- Barre supérieure dédiée aux HP, PA et PM, avec jauges et badges colorés ; le
+  dialogue et le journal restent dans un panneau indépendant en bas.
 
 ## Lancer
 
@@ -51,19 +57,28 @@ classes depuis l'Inspector, consultez `docs/GODOT_EDITING_GUIDE.md`.
 ## Boucle de combat
 
 - Chaque héros commence avec 3 AP et 3 MP.
-- Toucher une case marquée `M` déplace le héros et consomme le coût du chemin.
-- `Claw Strike` coûte 1 AP et cible `Moss Slime` à portée 1.
+- Les cases cyan indiquent les déplacements possibles, sans lettre superposée.
+- Sélectionner un sort affiche toute sa portée en orange avant le ciblage ; une
+  cible réellement attaquable reçoit un contour renforcé.
+- `Wolf Guardian` utilise `Claw Strike`, `Guard Break` et `Wild Roar`.
+- `Fox Mystic` utilise `Spark Bolt`, `Ember Arc` et `Starfall`.
+- Les sorts de zone peuvent toucher jusqu'à trois Slimes regroupés.
 - `Spark Bolt` coûte 1 AP, porte jusqu'à 4 cases et exige une ligne de vue libre ;
   les piliers intégrés à la map peuvent donc bloquer le tir de `Fox Mystic`.
 - Choisir `Claw Strike`, puis toucher `Moss Slime`, lance immédiatement le sort :
   aucune confirmation supplémentaire n’est demandée.
 - `Terminer le tour` déclenche le déplacement et les attaques déterministes du monstre.
+- Chaque tour joueur dure 30 secondes. Une jauge passe à l’orange puis au rouge
+  avant de terminer automatiquement le tour lorsque le temps est écoulé.
+- Le bouton de changement de personnage bascule entre `Wolf Guardian` et
+  `Fox Mystic`. Le combat redémarre sur la même arène contre le même groupe.
 - Dans la boucle open world, vaincre `Moss Slime` joue l’animation de victoire
   puis retourne automatiquement dans la map. Le monstre réapparaît pour pouvoir
   être rejoué : 8 Leaf Coins + 40 XP au premier clear, puis 2 Coins + 10 XP.
 
 Contrôles clavier : flèches pour déplacer le focus, `Entrée` pour sélectionner,
-`A` pour l’attaque, `E` pour terminer le tour et `R` pour recommencer.
+`1`/`2`/`3` pour les sorts, `C` pour changer de personnage, `E` pour terminer
+le tour et `R` pour recommencer.
 
 ## Test déterministe
 
@@ -72,6 +87,7 @@ Quand l’exécutable Godot est disponible dans le terminal :
 ```powershell
 godot --headless --path . --script res://tests/test_combat_state.gd
 godot --headless --path . --script res://tests/test_character_classes.gd
+godot --headless --path . --script res://tests/test_random_encounters.gd
 ```
 
 Test de fumée du combat animé complet :
@@ -87,6 +103,7 @@ Tests du monde et de la boucle complète :
 godot --headless --path . --script res://tests/test_world_state.gd
 godot --headless --path . --script res://tests/test_game_flow_smoke.gd
 godot --headless --path . --script res://tests/test_combat_auto_exit.gd
+godot --headless --path . --script res://tests/test_combat_hud.gd
 ```
 
 ## Limites intentionnelles
@@ -100,5 +117,5 @@ godot --headless --path . --script res://tests/test_combat_auto_exit.gd
 - `Split Bud` est désactivé, comme autorisé pour le premier combat tutoriel.
 - Les illustrations `v1` sont des placeholders originaux générés pour ce POC ;
   leur provenance et les limites de production sont dans `assets/ART_ASSET_NOTES.md`.
-- L’interface expose les coordonnées et la légalité par texte et couleur, mais une
+- L’interface expose la légalité par texte et couleur, mais une
   validation complète par lecteur d’écran reste une étape de production mobile.

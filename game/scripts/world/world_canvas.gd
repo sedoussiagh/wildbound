@@ -21,6 +21,8 @@ const INTERACTION_POSITIONS := {
 	"berry_east": Vector2(825, 475),
 	"traveler": Vector2(350, 490),
 	"moss_slime_woods": Vector2(690, 338),
+	"moss_slime_creek": Vector2(535, 245),
+	"moss_slime_ruins": Vector2(790, 585),
 }
 
 var world_state
@@ -135,7 +137,9 @@ func _draw_entities_by_depth() -> void:
 		{"kind": "traveler", "position": get_interaction_position("traveler")},
 		{"kind": "player", "position": player_position},
 	]
-	entities.append({"kind": "slime", "position": get_interaction_position("moss_slime_woods")})
+	entities.append({"kind": "slime", "position": get_interaction_position("moss_slime_woods"), "count": 1})
+	entities.append({"kind": "slime", "position": get_interaction_position("moss_slime_creek"), "count": 2})
+	entities.append({"kind": "slime", "position": get_interaction_position("moss_slime_ruins"), "count": 3})
 	entities.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.position.y < b.position.y)
 
 	for entity in entities:
@@ -150,11 +154,7 @@ func _draw_entities_by_depth() -> void:
 				_draw_texture_at(traveler_definition.walk_frames[0], entity.position, 120.0, Color(0.72, 0.92, 1.0, 0.92))
 				_draw_nameplate(entity.position + Vector2(0, -127), "River Scout · Social POC", Color("#8de4ff"))
 			"slime":
-				var slime_frame := int(floor(_clock * 4.0)) % SLIME_WALK_FRAMES.size()
-				var slime_position: Vector2 = entity.position + Vector2(0, sin(_clock * 3.5) * 3.0)
-				_draw_shadow(entity.position, 24.0)
-				_draw_texture_at(SLIME_WALK_FRAMES[slime_frame], slime_position, 92.0, Color.WHITE)
-				_draw_nameplate(entity.position + Vector2(0, -99), "Moss Slime · Encounter", Color("#ffbf9c"))
+				_draw_slime_group(entity.position, int(entity.count))
 			"player":
 				var player_frames := _player_walk_frames()
 				var frame := 0
@@ -169,6 +169,21 @@ func _draw_entities_by_depth() -> void:
 func _player_walk_frames() -> Array:
 	var hero_id: String = world_state.hero_class_id if world_state != null else HeroCatalogScript.WOLF_GUARDIAN
 	return HeroCatalogScript.get_definition(hero_id).walk_frames
+
+
+func _draw_slime_group(group_position: Vector2, count: int) -> void:
+	var offsets: Array[Vector2] = [Vector2.ZERO]
+	if count == 2:
+		offsets = [Vector2(-24, 7), Vector2(24, 7)]
+	elif count >= 3:
+		offsets = [Vector2(0, -12), Vector2(-34, 14), Vector2(34, 14)]
+	var slime_frame := int(floor(_clock * 4.0)) % SLIME_WALK_FRAMES.size()
+	for index in range(mini(count, offsets.size())):
+		var foot := group_position + offsets[index]
+		var bob := Vector2(0, sin(_clock * 3.5 + float(index)) * 3.0)
+		_draw_shadow(foot, 22.0)
+		_draw_texture_at(SLIME_WALK_FRAMES[slime_frame], foot + bob, 86.0, Color.WHITE)
+	_draw_nameplate(group_position + Vector2(0, -107), "Moss Slimes ×%d · Encounter" % count, Color("#ffbf9c"))
 
 
 func _draw_texture_at(texture: Texture2D, foot: Vector2, height: float, tint: Color) -> void:
@@ -188,10 +203,12 @@ func _draw_shadow(foot: Vector2, radius: float) -> void:
 
 func _draw_nameplate(position_value: Vector2, text_value: String, color: Color) -> void:
 	var font := get_theme_default_font()
-	var width := font.get_string_size(text_value, HORIZONTAL_ALIGNMENT_CENTER, -1, 13).x + 20.0
+	var font_size := 13
+	var width := font.get_string_size(text_value, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x + 20.0
 	var rect := Rect2(position_value - Vector2(width * 0.5, 15), Vector2(width, 23))
 	draw_style_box(_pill_style(Color(0.02, 0.08, 0.09, 0.84), color), rect)
-	draw_string(font, position_value, text_value, HORIZONTAL_ALIGNMENT_CENTER, 0, 13, color)
+	var text_baseline := rect.position.y + (rect.size.y - font.get_height(font_size)) * 0.5 + font.get_ascent(font_size)
+	draw_string(font, Vector2(rect.position.x, text_baseline), text_value, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x, font_size, color)
 
 
 func _draw_location_marker(position_value: Vector2, label: String, color: Color) -> void:

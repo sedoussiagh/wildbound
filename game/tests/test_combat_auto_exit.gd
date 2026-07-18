@@ -12,6 +12,7 @@ func _init() -> void:
 func _run_test() -> void:
 	var scene: PackedScene = load("res://scenes/poc/battle_poc.tscn")
 	var battle = scene.instantiate()
+	battle.randomize_encounter = false
 	battle.enable_world_return("moss_slime_woods")
 	battle.auto_return_delay = 0.01
 	battle.battle_finished.connect(_on_battle_finished)
@@ -19,7 +20,7 @@ func _run_test() -> void:
 	await process_frame
 	await process_frame
 
-	battle.combat_state.player_position = Vector2i(4, 3)
+	battle.combat_state.player_position = battle.combat_state.enemy_position + Vector2i.LEFT
 	battle.combat_state.enemy_health = battle.combat_state.preview_claw_strike_damage()
 	battle.board.sync_visual_positions()
 	battle.selected_target = battle.combat_state.enemy_position

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="HeroDefinition" load_steps=12 format=3]
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/hero_definition.gd" id="1_definition"]
 [ext_resource type="Texture2D" path="res://assets/ui/icons/spark_bolt.png" id="2_skill"]
@@ -10,6 +10,9 @@
 [ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/attack_1.png" id="8_attack1"]
 [ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/attack_2.png" id="9_attack2"]
 [ext_resource type="Texture2D" path="res://assets/characters/fox_mystic/attack_3.png" id="10_attack3"]
+[ext_resource type="Resource" path="res://resources/skills/spark_bolt.tres" id="11_skill1"]
+[ext_resource type="Resource" path="res://resources/skills/ember_arc.tres" id="12_skill2"]
+[ext_resource type="Resource" path="res://resources/skills/starfall.tres" id="13_skill3"]
 
 [resource]
 script = ExtResource("1_definition")
@@ -33,6 +36,7 @@ basic_skill_scaling = 0.75
 basic_skill_range = 4
 requires_line_of_sight = true
 skill_icon = ExtResource("2_skill")
+skills = Array[Resource]([ExtResource("11_skill1"), ExtResource("12_skill2"), ExtResource("13_skill3")])
 portrait = ExtResource("3_walk0")
 walk_frames = Array[Texture2D]([ExtResource("3_walk0"), ExtResource("4_walk1"), ExtResource("5_walk2"), ExtResource("6_walk3")])
 attack_frames = Array[Texture2D]([ExtResource("7_attack0"), ExtResource("8_attack1"), ExtResource("9_attack2"), ExtResource("10_attack3")])

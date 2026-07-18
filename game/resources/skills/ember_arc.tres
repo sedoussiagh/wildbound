@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/skill_definition.gd" id="1_skill"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/ember_arc.svg" id="2_icon"]
+
+[resource]
+script = ExtResource("1_skill")
+skill_id = "skill.ember_arc"
+display_name = "Ember Arc"
+description = "Explosion courte qui touche un groupe compact de Slimes."
+icon = ExtResource("2_icon")
+ap_cost = 2
+cast_range = 4
+power = 14
+scaling = 0.55
+requires_line_of_sight = true
+target_mode = "area"
+area_radius = 1
+max_targets = 3

@@ -3,14 +3,14 @@
 | Spec | Version | Composant généré | Couverture |
 |---|---:|---|---|
 | `generation.implementation_roadmap` | 1.0.0 | `scenes/poc/battle_poc.tscn` | Increment 1 jouable |
-| `system.combat` | 1.0.0 | `scripts/combat/combat_state.gd` | grille 7×7, AP/MP, Manhattan, dégâts déterministes, tours |
-| `class.wolf_guardian` | 1.0.0 | `scripts/combat/combat_state.gd` | statistiques niveau 1 et `Claw Strike` |
-| `class.fox_mystic` | 1.0.0 | `scripts/characters/hero_catalog.gd`, `scripts/combat/combat_state.gd` | statistiques niveau 1, `Spark Bolt`, portée 4 et ligne de vue |
+| `system.combat` | 1.0.0 + variante POC | `scripts/combat/combat_state.gd`, `resources/arenas/` | grille POC 9×9, quatre layouts seedés, AP/MP, groupes 1–3, dégâts déterministes, tours |
+| `class.wolf_guardian` | 1.0.0 + kit POC | `resources/heroes/wolf_guardian.tres`, `resources/skills/` | statistiques niveau 1 et trois sorts POC `Claw Strike`, `Guard Break`, `Wild Roar` |
+| `class.fox_mystic` | 1.0.0 + kit POC | `resources/heroes/fox_mystic.tres`, `resources/skills/` | statistiques niveau 1 et trois sorts POC `Spark Bolt`, `Ember Arc`, `Starfall` |
 | `ux.onboarding` | 1.0.0 | `scenes/poc/character_select.tscn`, `scripts/poc/game_flow.gd` | comparaison, choix initial et changement libre de classe sans reset |
 | Authoring Godot | POC | `resources/`, `scenes/ui/`, `docs/GODOT_EDITING_GUIDE.md` | UI visible dans l'éditeur, données Inspector, thème partagé et marqueurs de map |
-| `monster.moss_slime` | 1.0.0 | `scripts/combat/combat_state.gd`, `scripts/world/world_state.gd` | statistiques, `Soft Bump`, respawn et récompense de répétition réduite |
-| `ux.mobile_controls` | 1.0.0 | `scripts/poc/battle_poc.gd` | paysage 1280×720, tap, preview, confirmation, boutons 56 px et icônes |
-| `ux.accessibility` | 1.0.0 | `scripts/poc/battle_board.gd` | coordonnées, labels M/A, texte + couleur, clavier |
+| `monster.moss_slime` | 1.0.0 | `scripts/combat/combat_state.gd`, `scripts/world/world_state.gd`, `scripts/world/world_canvas.gd` | statistiques, `Soft Bump`, groupes visibles 1/2/3, respawn et récompense de répétition réduite |
+| `ux.mobile_controls` | 1.0.0 | `scripts/poc/battle_poc.gd` | paysage 1280×720, icônes tactiles, tooltips, timer 30 s et passage automatique |
+| `ux.accessibility` | 1.0.0 | `scripts/poc/battle_board.gd` | grille sans chiffres superposés, texte + couleur, clavier |
 | `world.art_audio_direction` | 1.0.0 | `assets/`, `scripts/poc/battle_board.gd` | illustration fantasy lisible, profondeur 2.5D, silhouettes et feedback visuel |
 | `system.core_loops` | 1.0.0 | `scripts/poc/game_flow.gd` | déplacement → interaction/collecte/combat → feedback → retour sûr |
 | `system.exploration` | 1.0.0 | `scripts/world/world_poc.gd` | tap-to-move, stick virtuel, ressources personnelles, focus tactile, rencontre visible |
@@ -31,6 +31,9 @@
 - `assets/characters/moss_slime/` : quatre poses de bond et quatre poses de
   `Soft Bump`.
 - `assets/ui/icons/` : icônes des actions du POC, dont `Spark Bolt`, séparées des textes localisés.
+- `resources/skills/` : six sorts POC unitaires avec icône, coût, portée,
+  puissance et mode de ciblage modifiables dans l'Inspector.
+- `resources/arenas/` : quatre layouts 9×9 unitaires avec spawns et obstacles.
 - `assets/world/whispering_woods_hub_v1.png` : zone d’exploration 2.5D avec
   landmarks séparés et chemins continus.
 - `assets/characters/npcs/owl_sage_v1.png` : PNJ de quête original détouré.
@@ -41,15 +44,18 @@
 - `scripts/poc/game_flow.gd` : chargement du monde/combat, sauvegarde JSON,
   récompense et retour à la position d’exploration.
 - `scripts/poc/battle_board.gd` : projection isométrique, profondeur, ombres,
-  grille fusionnée au terrain, particules et animations déterministes par poses.
+  grille fusionnée au terrain, portée sans lettres, particules et animations déterministes par poses.
+- `scenes/poc/battle_poc.tscn` : dock de sorts seul à gauche, statistiques en
+  jauges/badges en haut, timer séparé et dialogue en bas.
 - `tests/test_visual_smoke.gd` : déplacement, tour ennemi, impacts et victoire.
 
 ## Assumptions
 
 - Le combat est le premier tutoriel : `Split Bud` est désactivé conformément à
   `monster.moss_slime`.
-- Les deux cases rocheuses servent au pathfinding et bloquent la ligne de vue de
-  `Spark Bolt` ; `Fox Mystic` doit se repositionner pour ouvrir un tir légal.
+- Les obstacles propres à chaque ressource d'arène servent au pathfinding et
+  bloquent la ligne de vue de `Spark Bolt` ; `Fox Mystic` doit se repositionner
+  pour ouvrir un tir légal.
 - Le domaine hors ligne préfigure l’autorité serveur mais n’est pas une autorité
   de production. Le réseau commence seulement à l’Increment 2.
 - `First Bloom` est une quête composite propre au POC destinée à tester plusieurs
@@ -73,8 +79,16 @@
   transition de combat.
 - En combat, choisir un sort puis toucher une cible légale exécute directement
   l’action, sans étape de confirmation supplémentaire.
+- La sélection d’un sort affiche toutes les cases à portée avant le ciblage et
+  respecte les obstacles ainsi que la ligne de vue.
+- Le tour joueur expire après 30 secondes et déclenche exactement la même
+  résolution déterministe que le bouton de fin de tour.
 - La victoire revient au monde, conserve XP et récompenses, puis fait réapparaître
   `Moss Slime` avec une récompense d’entraînement réduite aux clears suivants.
 - La mort du dernier adversaire déclenche automatiquement le retour au monde
   après le feedback visuel de victoire, sans action supplémentaire du joueur.
+- Une seed identique produit la même arène, le même groupe et les mêmes obstacles.
+- Les groupes de 1, 2 et 3 Slimes sont visibles et cliquables dans l'open world.
+- Chaque personnage expose exactement trois sorts et peut être remplacé pendant
+  le combat sans changer l'arène ni la taille du groupe.
 - Une ressource collectée ou une décoration placée ne peut pas être dupliquée.

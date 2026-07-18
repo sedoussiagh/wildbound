@@ -69,6 +69,7 @@ func _on_combat_requested(encounter_id: String) -> void:
 func _show_combat(encounter_id: String) -> void:
 	var battle = BATTLE_SCENE.instantiate()
 	battle.configure_hero(world_state.hero_class_id)
+	battle.configure_encounter(encounter_id)
 	battle.enable_world_return(encounter_id)
 	battle.battle_finished.connect(_on_battle_finished)
 	_replace_scene(battle)

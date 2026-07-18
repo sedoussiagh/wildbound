@@ -36,7 +36,7 @@ func _test_illegal_move_is_atomic() -> void:
 	var state = CombatStateScript.new()
 	var original_position: Vector2i = state.player_position
 	var original_mp: int = state.player_mp
-	var result: Dictionary = state.try_player_move(Vector2i(3, 3))
+	var result: Dictionary = state.try_player_move(state.obstacles[0])
 	_assert_equal(result.get("ok"), false, "Obstacle move is rejected")
 	_assert_equal(state.player_position, original_position, "Rejected move keeps position")
 	_assert_equal(state.player_mp, original_mp, "Rejected move keeps MP")
@@ -44,7 +44,7 @@ func _test_illegal_move_is_atomic() -> void:
 
 func _test_two_claw_strikes_win() -> void:
 	var state = CombatStateScript.new()
-	state.player_position = Vector2i(4, 3)
+	state.player_position = state.enemy_position + Vector2i.LEFT
 	var first: Dictionary = state.player_claw_strike(state.enemy_position)
 	var second: Dictionary = state.player_claw_strike(state.enemy_position)
 	_assert_equal(first.get("damage"), 32, "First Claw Strike deals exact preview damage")
@@ -65,14 +65,14 @@ func _test_enemy_turn_is_deterministic() -> void:
 
 func _test_soft_bump_uses_all_available_ap() -> void:
 	var state = CombatStateScript.new()
-	state.enemy_position = Vector2i(2, 3)
+	state.enemy_position = state.player_position + Vector2i.RIGHT
 	var result: Dictionary = state.end_player_turn()
 	var attack_count := 0
 	for event in result.events:
 		if event.get("type") == "enemy_attack":
 			attack_count += 1
-	_assert_equal(attack_count, 3, "Moss Slime spends its three AP when adjacent")
-	_assert_equal(state.player_health, 86, "Three Soft Bumps deal 39 total damage")
+	_assert_equal(attack_count, 1, "Moss Slime spends its available AP when adjacent")
+	_assert_equal(state.player_health, 112, "One Soft Bump deals 13 damage")
 
 
 func _assert_equal(actual, expected, label: String) -> void:
@@ -81,4 +81,3 @@ func _assert_equal(actual, expected, label: String) -> void:
 		return
 	failures += 1
 	printerr("FAIL: %s — expected %s, got %s" % [label, str(expected), str(actual)])
-

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/skill_definition.gd" id="1_skill"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/starfall.svg" id="2_icon"]
+
+[resource]
+script = ExtResource("1_skill")
+skill_id = "skill.starfall"
+display_name = "Starfall"
+description = "Sort ultime de zone à très longue portée."
+icon = ExtResource("2_icon")
+ap_cost = 3
+cast_range = 5
+power = 27
+scaling = 0.8
+requires_line_of_sight = true
+target_mode = "area"
+area_radius = 1
+max_targets = 3

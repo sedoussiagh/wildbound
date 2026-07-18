@@ -10,6 +10,7 @@ func _init() -> void:
 func _run_test() -> void:
 	var scene: PackedScene = load("res://scenes/poc/battle_poc.tscn")
 	var battle = scene.instantiate()
+	battle.randomize_encounter = false
 	battle.configure_hero("class.fox_mystic")
 	root.add_child(battle)
 	await process_frame
@@ -17,7 +18,7 @@ func _run_test() -> void:
 
 	_assert_equal(battle.combat_state.player_basic_skill_name, "Spark Bolt", "Ranged combat HUD uses Spark Bolt")
 	_assert_equal(battle.attack_button.icon.resource_path, "res://assets/ui/icons/spark_bolt.png", "Ranged action uses its dedicated icon")
-	battle.combat_state.player_position = Vector2i(2, 4)
+	battle.combat_state.player_position = battle.combat_state.enemy_position + Vector2i(-4, 0)
 	battle.board.sync_visual_positions()
 	battle._on_attack_pressed()
 	await battle._on_cell_pressed(battle.combat_state.enemy_position)

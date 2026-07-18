@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ArenaDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/arena_definition.gd" id="1_arena"]
+
+[resource]
+script = ExtResource("1_arena")
+arena_id = "arena.moonlit_crossing"
+display_name = "Moonlit Crossing"
+player_spawn = Vector2i(1, 4)
+enemy_spawns = Array[Vector2i]([Vector2i(7, 4), Vector2i(7, 2), Vector2i(7, 6)])
+obstacles = Array[Vector2i]([Vector2i(4, 2), Vector2i(4, 3), Vector2i(4, 5), Vector2i(4, 6)])

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SkillDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/skill_definition.gd" id="1_skill"]
+[ext_resource type="Texture2D" path="res://assets/ui/icons/wild_roar.svg" id="2_icon"]
+
+[resource]
+script = ExtResource("1_skill")
+skill_id = "skill.wild_roar"
+display_name = "Wild Roar"
+description = "Onde de choc qui frappe tous les Slimes autour de la case ciblée."
+icon = ExtResource("2_icon")
+ap_cost = 3
+cast_range = 2
+power = 16
+scaling = 0.55
+target_mode = "area"
+area_radius = 1
+max_targets = 3

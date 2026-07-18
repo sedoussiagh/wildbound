@@ -27,6 +27,9 @@ extends Resource
 @export var requires_line_of_sight := false
 @export var skill_icon: Texture2D
 
+@export_category("Skills")
+@export var skills: Array[SkillDefinition] = []
+
 @export_category("Visuals")
 @export var portrait: Texture2D
 @export var walk_frames: Array[Texture2D] = []
@@ -55,6 +58,7 @@ func to_dictionary() -> Dictionary:
 		"basic_skill_range": basic_skill_range,
 		"requires_line_of_sight": requires_line_of_sight,
 		"skill_icon": skill_icon,
+		"skills": skills,
 		"portrait": portrait,
 		"walk_frames": walk_frames,
 		"attack_frames": attack_frames,

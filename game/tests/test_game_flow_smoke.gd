@@ -27,6 +27,8 @@ func _run_flow_test() -> void:
 	_assert_equal(flow.world_state.hero_class_id, "class.fox_mystic", "Selected class persists in the world state")
 	_assert_equal(flow.current_scene.world_canvas != null, true, "Open world canvas is ready")
 	var world = flow.current_scene
+	_assert_equal("moss_slime_creek" in world._active_interactions(), true, "A two-Slime group is visible in the open world")
+	_assert_equal("moss_slime_ruins" in world._active_interactions(), true, "A three-Slime group is visible in the open world")
 	world._handle_world_tap(Vector2(600, 600))
 	world._process(1.0)
 	_assert_equal(flow.world_state.player_position.x > 500.0, true, "Tap-to-walk moves the selected hero across the map")
@@ -44,6 +46,7 @@ func _run_flow_test() -> void:
 	_assert_equal(flow.current_scene.name, "BattlePoc", "One monster click opens the combat scene")
 	_assert_equal(flow.current_scene.world_return_enabled, true, "Combat knows it must return to the world")
 	_assert_equal(flow.current_scene.combat_state.hero_class_id, "class.fox_mystic", "Combat uses the selected ranged hero")
+	_assert_equal(flow.current_scene.combat_state.encounter_group_size, 1, "The story Slime opens a one-enemy encounter")
 
 	flow._complete_battle("victory", "moss_slime_woods")
 	await process_frame

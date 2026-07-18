@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ArenaDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/arena_definition.gd" id="1_arena"]
+
+[resource]
+script = ExtResource("1_arena")
+arena_id = "arena.moss_ring"
+display_name = "Moss Ring"
+player_spawn = Vector2i(1, 4)
+enemy_spawns = Array[Vector2i]([Vector2i(7, 4), Vector2i(6, 2), Vector2i(6, 6)])
+obstacles = Array[Vector2i]([Vector2i(3, 3), Vector2i(5, 3), Vector2i(3, 5), Vector2i(5, 5)])

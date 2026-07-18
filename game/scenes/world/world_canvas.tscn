@@ -41,3 +41,9 @@ position = Vector2(350, 490)
 
 [node name="MossSlimeWoods" type="Marker2D" parent="InteractionMarkers"]
 position = Vector2(690, 338)
+
+[node name="MossSlimeCreek" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(535, 245)
+
+[node name="MossSlimeRuins" type="Marker2D" parent="InteractionMarkers"]
+position = Vector2(790, 585)

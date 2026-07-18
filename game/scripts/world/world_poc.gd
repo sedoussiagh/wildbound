@@ -117,7 +117,7 @@ func _handle_world_tap(tap_position: Vector2) -> void:
 	var best_distance := INF
 	for interaction_id in _active_interactions():
 		var distance := tap_position.distance_to(_interaction_position(interaction_id))
-		var hit_radius := 92.0 if interaction_id == "moss_slime_woods" else 62.0
+		var hit_radius := 92.0 if interaction_id.begins_with("moss_slime_") else 62.0
 		if distance <= hit_radius and distance < best_distance:
 			best_distance = distance
 			tapped_interaction = interaction_id
@@ -159,6 +159,8 @@ func _active_interactions() -> Array[String]:
 		if berry_id not in world_state.collected_berries:
 			result.append(berry_id)
 	result.append("moss_slime_woods")
+	result.append("moss_slime_creek")
+	result.append("moss_slime_ruins")
 	return result
 
 
@@ -184,8 +186,8 @@ func _interact(interaction_id: String) -> void:
 			result = world_state.collect_berry(interaction_id)
 		"traveler":
 			result = {"ok": true, "title": "River Scout", "message": "Hello! Cette présence sociale est locale dans le POC ; le vrai réseau viendra avec le serveur."}
-		"moss_slime_woods":
-			status_label.text = "Moss Slime vous défie. Préparation du combat…"
+		"moss_slime_woods", "moss_slime_creek", "moss_slime_ruins":
+			status_label.text = "%s vous défie. Préparation du combat…" % _interaction_label(interaction_id)
 			state_changed.emit()
 			combat_requested.emit(interaction_id)
 			return
@@ -256,4 +258,6 @@ func _interaction_label(interaction_id: String) -> String:
 		"berry_north", "berry_south", "berry_east": return "Glow Berry"
 		"traveler": return "River Scout"
 		"moss_slime_woods": return "Moss Slime"
+		"moss_slime_creek": return "Moss Slimes ×2"
+		"moss_slime_ruins": return "Moss Slimes ×3"
 	return "Point d'intérêt"
